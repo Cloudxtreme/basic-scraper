@@ -1,7 +1,8 @@
 import requests
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 import sys
 import json
+import pprint
 
 
 def get_search_results(
@@ -66,19 +67,38 @@ def parse_source(str):
 
 def extract_json_listings(parsed):
     all_listings = parsed[0]
-    print len(all_listings)
-
-#    return listings
+    listings = [
+        {
+            'description': item['PostingTitle'],
+            'link': item['PostingURL'],
+            'location': {
+                'data-latitude': item['Latitude'],
+                'data-longitude': item['Longitude']
+                },
+            'price': item['Ask'],
+            'size': item['Bedrooms']
+        } for item in all_listings if 'PostingTitle' in item]
+    # uncomment to see what's being ditched...
+    """
+    for item in all_listings:
+        if 'PostingTitle' not in item:
+            print item
+    """
+#    print len(all_listings)
+#    print len(listings)
+    return listings
 
 
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
-        html, encoding = get_json_search_results(
+        json_data = get_json_search_results(
             minAsk=500, maxAsk=1000, bedrooms=2, use_file='apa.json'
         )
     else:
-        html, encoding = get_json_search_results(
+        json_data = get_json_search_results(
             minAsk=500, maxAsk=1000, bedrooms=2
         )
-    doc = parse_source(html, encoding)
-    print doc.prettify(encoding=encoding)
+    doc = parse_source(json_data)
+    listings = extract_json_listings(doc)
+    print len(listings)
+    pprint.pprint(listings[0])
