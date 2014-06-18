@@ -1,10 +1,10 @@
 basic-scraper
 =============
 
-## Author @Perry Hook
+## Author Perry Hook
 
 ##Description
-Scrape craigslist apartment listings for geographical information and returns listings in a dictionary.  
+Scrape craigslist json data from apartment listings for geographical information and returns listings in a dictionary.  
 Dictionary contains the following keys for each listing:
 
 - Description
