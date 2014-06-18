@@ -13,3 +13,5 @@ Dictionary contains the following keys for each listing:
 - Size
 - Location (gives another dictionary with data-latitude and data-longitude keys)
 
+[![Travis](https://api.travis-ci.org/perryhook/basic-scraper)](https://api.travis-ci.org/perryhook/basicscraper)
+
