@@ -1,0 +1,7 @@
+argparse==1.2.1
+beautifulsoup4==4.3.2
+html5lib==0.999
+requests==2.3.0
+requirements==0.1
+six==1.7.2
+wsgiref==0.1.2
