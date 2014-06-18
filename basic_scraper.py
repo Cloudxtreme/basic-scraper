@@ -7,7 +7,9 @@ import pprint
 
 def get_search_results(
         query=None, minAsk=None, maxAsk=None, bedrooms=None, use_file=None):
-    # print locals().items()
+    """
+    DEPRECATED.  Just use get_json_search_results instead
+    """
     search_params = {
         key: val for key, val in locals().items() if val is not None
         }
@@ -44,7 +46,6 @@ def get_file_search_results(
 
 def get_json_search_results(
         query=None, minAsk=None, maxAsk=None, bedrooms=None, use_file=None):
-    # print locals().items()
     search_params = {
         key: val for key, val in locals().items() if val is not None
     }
@@ -52,17 +53,13 @@ def get_json_search_results(
         raise ValueError("No valid keywords")
     if use_file:
         with open(use_file, 'r') as infile:
-            resp = infile.read()
-            return resp
+            resp = json.load(infile)
+        return resp
     else:
         base = 'http://seattle.craigslist.org/jsonsearch/apa'
         resp = requests.get(base, params=search_params, timeout=3)
         resp.raise_for_status()  # <- no-op if status==200
         return resp.json()
-
-
-def parse_source(str):
-    return json.loads(str)
 
 
 def extract_json_listings(parsed):
@@ -84,21 +81,18 @@ def extract_json_listings(parsed):
         if 'PostingTitle' not in item:
             print item
     """
+#    pprint.pprint(listings)
 #    print len(all_listings)
 #    print len(listings)
     return listings
 
 
 if __name__ == '__main__':
+
+    params = {'minAsk': 500, 'maxAsk': 1000, 'bedrooms': 2}
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
-        json_data = get_json_search_results(
-            minAsk=500, maxAsk=1000, bedrooms=2, use_file='apa.json'
-        )
-    else:
-        json_data = get_json_search_results(
-            minAsk=500, maxAsk=1000, bedrooms=2
-        )
-    doc = parse_source(json_data)
-    listings = extract_json_listings(doc)
+        params['use_file'] = 'apa.json'
+    json_data = get_json_search_results(**params)
+    listings = extract_json_listings(json_data)
     print len(listings)
     pprint.pprint(listings[0])
