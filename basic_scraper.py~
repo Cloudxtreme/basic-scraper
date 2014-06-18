@@ -1,5 +1,0 @@
-import requests
-
-def get_search_results(**kwargs):
-    print kwargs
-    url =
