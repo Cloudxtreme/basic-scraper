@@ -87,6 +87,30 @@ def extract_json_listings(parsed):
     return listings
 
 
+def add_address(entry):
+    """
+    format the location data provided in that listing properly.
+    make a reverse geocoding lookup using the google api above.
+    add the best available address to the listing.
+    return the updated listing.
+    """
+    url = "http://maps.googleapis.com/maps/api/geocode/json"
+    location = entry['location']
+    latlng = "{0},{1}".format(
+        location['data-latitude'], location['data-longitude'])
+    parameters = {'latlng': latlng, 'sensor': 'false'}
+    resp = requests.get(url, params=parameters)
+    # below is a no-op if all is well
+    resp.raise_for_status()
+    data = json.loads(resp.text)
+    if data['status'] == 'OK':
+        entry['address'] = data['results'][0]['formatted_address']
+        print entry
+    else:
+        entry['address'] = 'unavailable'
+    return entry
+
+
 if __name__ == '__main__':
 
     params = {'minAsk': 500, 'maxAsk': 1000, 'bedrooms': 2}
@@ -96,3 +120,4 @@ if __name__ == '__main__':
     listings = extract_json_listings(json_data)
     print len(listings)
     pprint.pprint(listings[0])
+    add_address(listings[0])
