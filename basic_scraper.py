@@ -6,7 +6,6 @@ import pprint
 
 def get_json_search_results(
         query=None, minAsk=None, maxAsk=None, bedrooms=None, use_file=None):
-    # print "in get_json_search_results"
     search_params = {
         key: val for key, val in locals().items() if val is not None
     }
@@ -24,7 +23,6 @@ def get_json_search_results(
 
 
 def extract_json_geocluster_listings(geocluster):
-    # print "in geocluster listings"
     base = 'http://seattle.craigslist.org'
     resp = requests.get(base + geocluster['url'], timeout=3)
     resp.raise_for_status()
@@ -57,17 +55,9 @@ def extract_json_listings(parsed, no_geoclusters=False):
                             'price': item['Ask'],
                             'size': item['Bedrooms']
                             })
-        # look for GeoClusters to extract (won't run if in test mode)
-        #    print "test mode is: {}".format(test_mode)
+        # look for GeoClusters to extract
         elif 'GeoCluster' in item and not no_geoclusters:
             listings = listings + extract_json_geocluster_listings(item)
-        """
-        else:
-            print "This item was not extracted (this may be because you are" \
-                "running test mode):"
-            pprint.pprint(item)
-            print '\n'
-        """
     return listings
 
 
@@ -89,7 +79,6 @@ def add_address(entry):
     data = json.loads(resp.text)
     if data['status'] == 'OK':
         entry['address'] = data['results'][0]['formatted_address']
-        # print entry
     else:
         entry['address'] = 'unavailable'
     return entry
